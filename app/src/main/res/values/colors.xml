@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="red">#BD0820</color>
+    <color name="gold">#FFD700</color>
+    <color name="blue">#1E90FF</color>
+    <color name="light_red">#FF6347</color>
+    <color name="genre_romance_start">#F06292</color>
+    <color name="genre_romance_end">#E91E63</color>
+    <color name="genre_sci_fi_start">#26C6DA</color>
+    <color name="genre_sci_fi_end">#0097A7</color>
+    <color name="genre_mystery_start">#5C6BC0</color>
+    <color name="genre_mystery_end">#3949AB</color>
+    <color name="genre_fantasy_start">#AB47BC</color>
+    <color name="genre_fantasy_end">#7B1FA2</color>
+    <color name="genre_suspense_start">#FF7043</color>
+    <color name="genre_suspense_end">#D84315</color>
+    <color name="genre_horror_start">#C62828</color>
+    <color name="genre_horror_end">#8E0000</color>
+    <color name="genre_biography_start">#FFCA28</color>
+    <color name="genre_biography_end">#FF8F00</color>
+    <color name="genre_history_start">#A1887F</color>
+    <color name="genre_history_end">#6D4C41</color>
+    <color name="genre_self_help_start">#9CCC65</color>
+    <color name="genre_self_help_end">#689F38</color>
+    <color name="genre_poetry_start">#4DD0E1</color>
+    <color name="genre_poetry_end">#00ACC1</color>
+</resources>
