@@ -17,4 +17,12 @@
         android:label="fragment_favorite"
         tools:layout="@layout/fragment_favorite" >
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_details"
+        android:name="com.canaldothiago.mybooks.ui.DetailsFragment"
+        android:label="fragment_details"
+        tools:layout="@layout/fragment_details" >
+    </fragment>
+
 </navigation>

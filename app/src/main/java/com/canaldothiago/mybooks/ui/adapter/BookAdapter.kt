@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.canaldothiago.mybooks.databinding.ItemBookBinding
 import com.canaldothiago.mybooks.entity.BookEntity
+import com.canaldothiago.mybooks.ui.listener.BookListener
 import com.canaldothiago.mybooks.ui.viewholder.BookViewHolder
 
 // Adapter é o "gerente" do RecyclerView
@@ -17,6 +18,7 @@ class BookAdapter : RecyclerView.Adapter<BookViewHolder>() {
     // Lista de dados que o RecyclerView vai mostrar
     // Se essa lista estiver vazia, a tela fica vazia
     private var bookList = listOf<BookEntity>()
+    private lateinit var bookListener: BookListener
 
     // Esse método é chamado quando o RecyclerView
     // precisa CRIAR um novo item visual
@@ -31,7 +33,7 @@ class BookAdapter : RecyclerView.Adapter<BookViewHolder>() {
         )
 
         // Entrega essa View para o ViewHolder
-        return BookViewHolder(view)
+        return BookViewHolder(view, bookListener)
     }
 
     // Esse método é chamado para LIGAR os dados
@@ -56,5 +58,9 @@ class BookAdapter : RecyclerView.Adapter<BookViewHolder>() {
     fun updateBooks(list: List<BookEntity>) {
         bookList = list
         notifyDataSetChanged()
+    }
+
+    fun attachListener(listener: BookListener) {
+        bookListener = listener
     }
 }
