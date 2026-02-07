@@ -1,107 +1,89 @@
 package com.canaldothiago.mybooks.repository
 
+import android.content.Context
 import com.canaldothiago.mybooks.entity.BookEntity
 
-class BookRepository private constructor() {
 
+/**
+ * Classe responsável por armazenar e manipular os livros.
+ * Simula um banco de dados local usando uma lista mutável.
+ */
+class BookRepository private constructor(context: Context) {
+
+    private var database = BookDatabaseHelper(context)
+
+    // Lista mutável que armazena os livros
     private val books = mutableListOf<BookEntity>()
 
     init {
+        // Popula o repositório com os 10 livros iniciais
         books.addAll(getInitialBooks())
     }
 
+    /**
+     * O padrão Singleton garante que uma classe tenha apenas uma instância durante toda a execução do programa.
+     * Ele fornece um ponto de acesso global para acessar essa instância de forma controlada e segura.
+     *
+     * Vantagens do Singleton:
+     * - Garante que a classe tenha uma única instância.
+     * - Oferece um ponto de acesso global para essa instância.
+     * - Pode ser útil para recursos compartilhados, como conexões de banco de dados ou repositórios de dados.
+     */
     companion object {
         private lateinit var instance: BookRepository
 
-        fun getInstance(): BookRepository {
+        /**
+         * Fornece a única instância do BookRepository.
+         * Esta é uma implementação thread-safe do padrão singleton.
+         */
+        fun getInstance(context: Context): BookRepository {
             synchronized(this) {
                 if (!::instance.isInitialized) {
-                    instance = BookRepository()
+                    instance = BookRepository(context)
                 }
             }
             return instance
         }
     }
 
+    /**
+     * Cria uma lista inicial de livros para popular o repositório.
+     */
     private fun getInitialBooks(): List<BookEntity> {
         return listOf(
-            BookEntity(
-                id = 1,
-                title = "O Senhor dos Anéis",
-                author = "J.R.R. Tolkien",
-                favorite = true,
-                genre = "Fantasia"
-            ),
-            BookEntity(
-                id = 2,
-                title = "Orgulho e Preconceito",
-                author = "Jane Austen",
-                favorite = false,
-                genre = "Romance"
-            ),
-            BookEntity(
-                id = 3,
-                title = "Duna",
-                author = "Frank Herbert",
-                favorite = true,
-                genre = "Ficção Científica"
-            ),
-            BookEntity(
-                id = 4,
-                title = "O Assassinato no Expresso do Oriente",
-                author = "Agatha Christie",
-                favorite = false,
-                genre = "Mistério"
-            ),
-            BookEntity(
-                id = 5,
-                title = "A Garota no Trem",
-                author = "Paula Hawkins",
-                favorite = false,
-                genre = "Suspense"
-            ),
-            BookEntity(
-                id = 6,
-                title = "It: A Coisa",
-                author = "Stephen King",
-                favorite = true,
-                genre = "Terror"
-            ),
-            BookEntity(
-                id = 7,
-                title = "Steve Jobs",
-                author = "Walter Isaacson",
-                favorite = false,
-                genre = "Biografia"
-            ),
-            BookEntity(
-                id = 8,
-                title = "Sapiens: Uma Breve História da Humanidade",
-                author = "Yuval Noah Harari",
-                favorite = true,
-                genre = "História"
-            ),
-            BookEntity(
-                id = 9,
-                title = "O Poder do Hábito",
-                author = "Charles Duhigg",
-                favorite = false,
-                genre = "Autoajuda"
-            ),
-            BookEntity(
-                id = 10,
-                title = "Antologia Poética",
-                author = "Vinícius de Moraes",
-                favorite = true,
-                genre = "Poesia"
-            )
+            BookEntity(1, "To Kill a Mockingbird", "Harper Lee", true, "Ficção"),
+            BookEntity(2, "Dom Casmurro", "Machado de Assis", false, "Romance"),
+            BookEntity(3, "O Hobbit", "J.R.R. Tolkien", true, "Fantasia"),
+            BookEntity(4, "Cem Anos de Solidão", "Gabriel García Márquez", false, "Romance"),
+            BookEntity(5, "O Pequeno Príncipe", "Antoine de Saint-Exupéry", false, "Fantasia"),
+            BookEntity(6, "Crime e Castigo", "Fiódor Dostoiévski", false, "Ficção policial"),
+            BookEntity(7, "Frankenstein", "Mary Shelley", false, "Terror"),
+            BookEntity(8, "Harry Potter e a Pedra Filosofal", "J.K. Rowling", false, "Fantasia"),
+            BookEntity(9, "Neuromancer", "William Gibson", false, "Cyberpunk"),
+            BookEntity(10, "Senhor dos Anéis", "J.R.R. Tolkien", false, "Fantasia"),
+            BookEntity(11, "Drácula", "Bram Stoker", false, "Terror"),
+            BookEntity(12, "Orgulho e Preconceito", "Jane Austen", false, "Romance"),
+            BookEntity(13, "Harry Potter e a Câmara Secreta", "J.K. Rowling", false, "Fantasia"),
+            BookEntity(14, "As Crônicas de Nárnia", "C.S. Lewis", false, "Fantasia"),
+            BookEntity(15, "O Código Da Vinci", "Dan Brown", false, "Mistério"),
+            BookEntity(16, "It: A Coisa", "Stephen King", false, "Terror"),
+            BookEntity(17, "Moby Dick", "Herman Melville", true, "Aventura"),
+            BookEntity(18, "O Nome do Vento", "Patrick Rothfuss", true, "Fantasia"),
+            BookEntity(19, "O Conde de Monte Cristo", "Alexandre Dumas", true, "Aventura"),
+            BookEntity(20, "Os Miseráveis", "Victor Hugo", false, "Romance")
         )
     }
 
+    /**
+     * Retorna todos os livros armazenados.
+     */
     fun getAllBooks(): List<BookEntity> {
         return books
     }
 
+    /**
+     * Busca um livro pelo ID.
+     */
     fun getBookById(id: Int): BookEntity? {
         return books.find { it.id == id }
     }
@@ -110,16 +92,26 @@ class BookRepository private constructor() {
         books.add(book)
     }
 
+    /**
+     * Remove um livro pelo ID.
+     */
     fun deleteBookById(id: Int): Boolean {
         return books.removeIf { it.id == id }
     }
 
+    /**
+     * Retorna todos os livros marcados como favoritos.
+     */
     fun getFavoriteBooks(): List<BookEntity> {
         return books.filter { it.favorite }
     }
 
+    /**
+     * Alterna entre true e false o atributo 'favorite'
+     * */
     fun toggleFavoriteStatus(id: Int) {
         return books.find { it.id == id }.let {
+            // Alterna entre true e false
             it?.favorite = !it.favorite
         }
     }

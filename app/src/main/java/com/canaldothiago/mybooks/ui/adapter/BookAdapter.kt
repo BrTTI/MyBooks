@@ -20,8 +20,12 @@ class BookAdapter : RecyclerView.Adapter<BookViewHolder>() {
     private var bookList = listOf<BookEntity>()
     private lateinit var bookListener: BookListener
 
-    // Esse método é chamado quando o RecyclerView
-    // precisa CRIAR um novo item visual
+    /**
+     * Cria e retorna um novo ViewHolder para o item do RecyclerView.
+     *
+     * Este método é chamado quando o RecyclerView precisa criar um novo item para ser exibido.
+     * O layout do item é inflado e um novo ViewHolder é retornado, associado ao listener de interação com o item.
+     */
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
     ): BookViewHolder {
@@ -36,8 +40,9 @@ class BookAdapter : RecyclerView.Adapter<BookViewHolder>() {
         return BookViewHolder(view, bookListener)
     }
 
-    // Esse método é chamado para LIGAR os dados
-    // a um item que já foi criado
+    /**
+     * Vincula os dados do livro ao ViewHolder correspondente.
+     * */
     override fun onBindViewHolder(
         holder: BookViewHolder, position: Int
     ) {
@@ -53,13 +58,17 @@ class BookAdapter : RecyclerView.Adapter<BookViewHolder>() {
         return bookList.size
     }
 
-    // Método usado para atualizar os dados do adapter
-    // SEM isso, o RecyclerView não muda
+    /**
+     * Método usado para atualizar os dados do adapter
+     * SEM isso, o RecyclerView não muda*/
     fun updateBooks(list: List<BookEntity>) {
         bookList = list
         notifyDataSetChanged()
     }
 
+    /**
+    * Eventos na listagem
+    */
     fun attachListener(listener: BookListener) {
         bookListener = listener
     }

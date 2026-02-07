@@ -46,8 +46,7 @@ class HomeFragment : Fragment() {
         // Transforma o XML em objetos Kotlin
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        // Define como o RecyclerView será organizado
-        // LinearLayoutManager = lista vertical
+        // Atribui um layout que diz como a RecyclerView se comporta
         binding.recyclerviewBooks.layoutManager = LinearLayoutManager(context)
 
         attachListener()
