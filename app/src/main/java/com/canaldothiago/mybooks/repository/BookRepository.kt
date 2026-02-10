@@ -1,7 +1,10 @@
 package com.canaldothiago.mybooks.repository
 
+import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import com.canaldothiago.mybooks.entity.BookEntity
+import com.canaldothiago.mybooks.helper.DatabaseConstants
 
 
 /**
@@ -11,14 +14,6 @@ import com.canaldothiago.mybooks.entity.BookEntity
 class BookRepository private constructor(context: Context) {
 
     private var database = BookDatabaseHelper(context)
-
-    // Lista mutável que armazena os livros
-    private val books = mutableListOf<BookEntity>()
-
-    init {
-        // Popula o repositório com os 10 livros iniciais
-        books.addAll(getInitialBooks())
-    }
 
     /**
      * O padrão Singleton garante que uma classe tenha apenas uma instância durante toda a execução do programa.
@@ -47,72 +42,117 @@ class BookRepository private constructor(context: Context) {
     }
 
     /**
-     * Cria uma lista inicial de livros para popular o repositório.
-     */
-    private fun getInitialBooks(): List<BookEntity> {
-        return listOf(
-            BookEntity(1, "To Kill a Mockingbird", "Harper Lee", true, "Ficção"),
-            BookEntity(2, "Dom Casmurro", "Machado de Assis", false, "Romance"),
-            BookEntity(3, "O Hobbit", "J.R.R. Tolkien", true, "Fantasia"),
-            BookEntity(4, "Cem Anos de Solidão", "Gabriel García Márquez", false, "Romance"),
-            BookEntity(5, "O Pequeno Príncipe", "Antoine de Saint-Exupéry", false, "Fantasia"),
-            BookEntity(6, "Crime e Castigo", "Fiódor Dostoiévski", false, "Ficção policial"),
-            BookEntity(7, "Frankenstein", "Mary Shelley", false, "Terror"),
-            BookEntity(8, "Harry Potter e a Pedra Filosofal", "J.K. Rowling", false, "Fantasia"),
-            BookEntity(9, "Neuromancer", "William Gibson", false, "Cyberpunk"),
-            BookEntity(10, "Senhor dos Anéis", "J.R.R. Tolkien", false, "Fantasia"),
-            BookEntity(11, "Drácula", "Bram Stoker", false, "Terror"),
-            BookEntity(12, "Orgulho e Preconceito", "Jane Austen", false, "Romance"),
-            BookEntity(13, "Harry Potter e a Câmara Secreta", "J.K. Rowling", false, "Fantasia"),
-            BookEntity(14, "As Crônicas de Nárnia", "C.S. Lewis", false, "Fantasia"),
-            BookEntity(15, "O Código Da Vinci", "Dan Brown", false, "Mistério"),
-            BookEntity(16, "It: A Coisa", "Stephen King", false, "Terror"),
-            BookEntity(17, "Moby Dick", "Herman Melville", true, "Aventura"),
-            BookEntity(18, "O Nome do Vento", "Patrick Rothfuss", true, "Fantasia"),
-            BookEntity(19, "O Conde de Monte Cristo", "Alexandre Dumas", true, "Aventura"),
-            BookEntity(20, "Os Miseráveis", "Victor Hugo", false, "Romance")
-        )
-    }
-
-    /**
      * Retorna todos os livros armazenados.
      */
     fun getAllBooks(): List<BookEntity> {
-        return books
+        val list = mutableListOf<BookEntity>()
+        val db = database.readableDatabase
+        val cursor = db.query(
+            DatabaseConstants.BOOK.TABLE_NAME,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        )
+
+        while (cursor.moveToNext()) {
+            list.add(cursorToBook(cursor))
+        }
+
+        cursor.close()
+        db.close()
+        return list
     }
 
     /**
      * Busca um livro pelo ID.
      */
     fun getBookById(id: Int): BookEntity? {
-        return books.find { it.id == id }
-    }
+        val db = database.readableDatabase
+        var book: BookEntity? = null
+        val cursor = db.query(
+            DatabaseConstants.BOOK.TABLE_NAME,
+            null,
+            "${DatabaseConstants.BOOK.COLUMNS.ID} = ?",
+            arrayOf(id.toString()),
+            null,
+            null,
+            null
+        )
+        if (cursor.moveToFirst()) {
+            book = cursorToBook(cursor)
+        }
 
-    fun addBook(book: BookEntity) {
-        books.add(book)
+        cursor.close()
+        db.close()
+        return book
     }
 
     /**
      * Remove um livro pelo ID.
      */
-    fun deleteBookById(id: Int): Boolean {
-        return books.removeIf { it.id == id }
+    fun deleteBookById(id: Int): Int {
+        val db = database.readableDatabase
+        val rowsDeleted = db.delete(
+            DatabaseConstants.BOOK.COLUMNS.ID,
+            "${DatabaseConstants.BOOK.COLUMNS.ID} = ?",
+            arrayOf(id.toString())
+        )
+        db.close()
+        return rowsDeleted
     }
 
     /**
      * Retorna todos os livros marcados como favoritos.
      */
     fun getFavoriteBooks(): List<BookEntity> {
-        return books.filter { it.favorite }
+        val db = database.readableDatabase
+        val list = mutableListOf<BookEntity>()
+        val cursor = db.query(
+            DatabaseConstants.BOOK.TABLE_NAME,
+            null,
+            "${DatabaseConstants.BOOK.COLUMNS.FAVORITE} = ?",
+            arrayOf("1"),
+            null,
+            null,
+            null
+        )
+
+        while (cursor.moveToNext()) {
+            list.add(cursorToBook(cursor))
+        }
+
+        cursor.close()
+        db.close()
+        return list
     }
 
     /**
      * Alterna entre true e false o atributo 'favorite'
      * */
-    fun toggleFavoriteStatus(id: Int) {
-        return books.find { it.id == id }.let {
-            // Alterna entre true e false
-            it?.favorite = !it.favorite
+    fun toggleFavoriteStatus(id: Int, currentStats: Boolean) {
+        val db = database.writableDatabase
+        val values = ContentValues().apply {
+            put(DatabaseConstants.BOOK.COLUMNS.FAVORITE, if (currentStats) 0 else 1)
         }
+        db.update(
+            DatabaseConstants.BOOK.TABLE_NAME,
+            values,
+            "${DatabaseConstants.BOOK.COLUMNS.ID} = ?",
+            arrayOf(id.toString())
+        )
+        db.close()
+    }
+
+    private fun cursorToBook(cursor: Cursor): BookEntity {
+        return BookEntity(
+            id = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseConstants.BOOK.COLUMNS.ID)),
+            title = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseConstants.BOOK.COLUMNS.TITLE)),
+            author = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseConstants.BOOK.COLUMNS.AUTHOR)),
+            genre = cursor.getString(cursor.getColumnIndexOrThrow(DatabaseConstants.BOOK.COLUMNS.GENRE)),
+            favorite = cursor.getInt(cursor.getColumnIndexOrThrow(DatabaseConstants.BOOK.COLUMNS.FAVORITE)) == 1
+        )
     }
 }

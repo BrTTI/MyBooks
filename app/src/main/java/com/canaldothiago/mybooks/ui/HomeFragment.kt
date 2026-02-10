@@ -41,23 +41,23 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-
         // Infla o layout do fragment
         // Transforma o XML em objetos Kotlin
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        // Retorna a view principal da tela
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         // Atribui um layout que diz como a RecyclerView se comporta
         binding.recyclerviewBooks.layoutManager = LinearLayoutManager(context)
-
-        attachListener()
-
         // Conecta o adapter ao RecyclerView
         // Sem isso, nada aparece
         binding.recyclerviewBooks.adapter = adapter
 
+        attachListener()
         setObserver()
-        // Retorna a view principal da tela
-        return binding.root
     }
 
     override fun onResume() {
@@ -68,7 +68,6 @@ class HomeFragment : Fragment() {
     // Chamado quando a view do fragment é destruída
     override fun onDestroyView() {
         super.onDestroyView()
-
         // Remove a referência ao layout
         // Evita vazamento de memória (memory leak)
         _binding = null

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.canaldothiago.mybooks.R
 import com.canaldothiago.mybooks.databinding.FragmentDetailsBinding
 import com.canaldothiago.mybooks.helper.BookConstants
@@ -23,57 +24,60 @@ class DetailsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, b: Bundle?): View {
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        setObservers()
-        setListeners()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         bookId = arguments?.getInt(BookConstants.KEY.BOOK_ID) ?: 0
         viewModel.getBookById(bookId)
 
-        return binding.root
+        setObservers()
+        setListeners()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 
     private fun setListeners() {
-        binding.imageviewBack.setOnClickListener {
-            backScreen()
-        }
+        binding.imageviewBack.setOnClickListener { backScreen() }
         binding.buttonRemoveBook.setOnClickListener { handleRemove(bookId) }
-        binding.checkboxFavorite.setOnClickListener { hadleFavorite() }
+        binding.checkboxFavorite.setOnClickListener { handleFavorite() }
     }
 
-    private fun hadleFavorite() {
-        viewModel.togleFavorite(bookId)
+    private fun handleFavorite() {
+        viewModel.toggleFavorite(bookId)
     }
 
     private fun handleRemove(id: Int) {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setMessage(getString(R.string.dialog_message_delete_item))
-            .setPositiveButton(getString(R.string.dialog_positive_button_yes)) { dialog, _ ->
+        AlertDialog.Builder(requireContext())
+            .setMessage(getString(R.string.dialog_message_delete_item))
+            .setPositiveButton(getString(R.string.dialog_positive_button_yes)) { _, _ ->
                 viewModel.removeBook(id)
-                dialog.dismiss()
-            }.setNegativeButton(getString(R.string.dialog_negative_button_no)) { dialog, _ ->
-                dialog.dismiss()
-            }.show()
-        builder.create()
+            }
+            .setNegativeButton(getString(R.string.dialog_negative_button_no), null)
+            .show()
     }
 
     private fun setObservers() {
-        viewModel.book.observe(viewLifecycleOwner) {
-            binding.textviewTitleValue.text = it.title
-            binding.textviewAuthorValue.text = it.author
-            binding.textviewGenreValue.text = it.genre
-            binding.textviewGenreValue.setGenreGradient(it.genre)
-            binding.checkboxFavorite.isChecked = it.favorite
+        viewModel.book.observe(viewLifecycleOwner) { book ->
+            binding.apply {
+                textviewTitleValue.text = book.title
+                textviewAuthorValue.text = book.author
+                textviewGenreValue.text = book.genre
+                textviewGenreValue.setGenreGradient(book.genre)
+                checkboxFavorite.isChecked = book.favorite
+            }
         }
-        viewModel.bookRemoved.observe((viewLifecycleOwner)) {
-            if (it) {
+
+        viewModel.bookRemoved.observe(viewLifecycleOwner) { success ->
+            if (success == 1) {
                 Toast.makeText(
-                    requireContext(), getString(R.string.msg_removed_successfully),
+                    requireContext(),
+                    getString(R.string.dialog_message_delete_item),
                     Toast.LENGTH_SHORT
                 ).show()
                 backScreen()
@@ -82,6 +86,6 @@ class DetailsFragment : Fragment() {
     }
 
     private fun backScreen() {
-        requireActivity().supportFragmentManager.popBackStack()
+        findNavController().popBackStack()
     }
 }

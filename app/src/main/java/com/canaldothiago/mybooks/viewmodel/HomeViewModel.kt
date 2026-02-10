@@ -9,14 +9,17 @@ import com.canaldothiago.mybooks.entity.BookEntity
 import com.canaldothiago.mybooks.repository.BookRepository
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
-
+    private val repository = BookRepository.getInstance(application.applicationContext)
     private val _books = MutableLiveData<List<BookEntity>>()
     val books: LiveData<List<BookEntity>> = _books
-    private val repository = BookRepository.getInstance(application.applicationContext)
     fun getAllBooks() {
         _books.value = repository.getAllBooks()
     }
     fun favorite(id: Int) {
-        repository.toggleFavoriteStatus(id)
+        val book = _books.value?.find { it.id == id }
+        book?.let {
+            repository.toggleFavoriteStatus(it.id, it.favorite)
+            getAllBooks()
+        }
     }
 }
