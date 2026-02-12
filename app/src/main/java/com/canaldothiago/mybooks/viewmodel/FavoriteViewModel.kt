@@ -19,7 +19,7 @@ class FavoriteViewModel(application: Application) : AndroidViewModel(application
     fun favorite(id: Int) {
         val book = _books.value?.find { it.id == id }
         book?.let {
-            repository.toggleFavoriteStatus(it.id, it.favorite)
+            repository.toggleFavoriteStatus(it.id)
             getFavoriteBooks()
         }
     }

@@ -26,5 +26,5 @@ interface BookDAO {
     fun update(book: BookEntity)
 
     @Insert
-    fun insert(book: BookEntity)
+    fun insert(book: List<BookEntity>)
 }

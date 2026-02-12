@@ -74,10 +74,10 @@ class DetailsFragment : Fragment() {
         }
 
         viewModel.bookRemoved.observe(viewLifecycleOwner) { success ->
-            if (success == 1) {
+            if (success) {
                 Toast.makeText(
                     requireContext(),
-                    getString(R.string.dialog_message_delete_item),
+                    getString(R.string.msg_removed_successfully),
                     Toast.LENGTH_SHORT
                 ).show()
                 backScreen()
