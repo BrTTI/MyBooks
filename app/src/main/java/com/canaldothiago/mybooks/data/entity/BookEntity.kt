@@ -1,4 +1,4 @@
-package com.canaldothiago.mybooks.entity
+package com.canaldothiago.mybooks.data.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

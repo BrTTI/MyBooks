@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.canaldothiago.mybooks.databinding.ItemBookBinding
-import com.canaldothiago.mybooks.entity.BookEntity
+import com.canaldothiago.mybooks.data.entity.BookEntity
 import com.canaldothiago.mybooks.ui.listener.BookListener
 import com.canaldothiago.mybooks.ui.viewholder.BookViewHolder
 

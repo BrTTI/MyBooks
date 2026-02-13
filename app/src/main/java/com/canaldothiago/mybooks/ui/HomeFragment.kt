@@ -58,11 +58,6 @@ class HomeFragment : Fragment() {
         setObserver()
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.getAllBooks()
-    }
-
     // Chamado quando a view do fragment é destruída
     override fun onDestroyView() {
         super.onDestroyView()
@@ -81,7 +76,6 @@ class HomeFragment : Fragment() {
 
             override fun onFavoriteClick(id: Int) {
                 viewModel.favorite(id)
-                viewModel.getAllBooks()
             }
         })
     }
@@ -90,7 +84,7 @@ class HomeFragment : Fragment() {
         // Observa a lista de livros do ViewModel
         // Sempre que os dados mudarem,
         // o RecyclerView será atualizado
-        viewModel.books.observe(viewLifecycleOwner) {
+        viewModel.bookList.observe(viewLifecycleOwner) {
             adapter.updateBooks(it)
         }
     }

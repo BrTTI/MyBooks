@@ -3,7 +3,7 @@ package com.canaldothiago.mybooks.ui.viewholder
 import androidx.recyclerview.widget.RecyclerView
 import com.canaldothiago.mybooks.R
 import com.canaldothiago.mybooks.databinding.ItemBookBinding
-import com.canaldothiago.mybooks.entity.BookEntity
+import com.canaldothiago.mybooks.data.entity.BookEntity
 import com.canaldothiago.mybooks.ui.listener.BookListener
 import com.canaldothiago.mybooks.utils.setGenreGradient
 

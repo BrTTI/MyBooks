@@ -15,7 +15,7 @@ import com.canaldothiago.mybooks.helper.BookConstants
 import com.canaldothiago.mybooks.utils.setGenreGradient
 import com.canaldothiago.mybooks.viewmodel.DetailsViewModel
 
-class DetailsFragment : Fragment() {
+class DetailsFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
@@ -31,7 +31,7 @@ class DetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         bookId = arguments?.getInt(BookConstants.KEY.BOOK_ID) ?: 0
-        viewModel.getBookById(bookId)
+        viewModel.getBook(bookId)
 
         setObservers()
         setListeners()
@@ -42,10 +42,18 @@ class DetailsFragment : Fragment() {
         _binding = null
     }
 
+    override fun onClick(v: View) {
+        when (v.id) {
+            R.id.imageview_back -> backScreen()
+            R.id.button_remove_book -> handleRemove(bookId)
+            R.id.checkbox_favorite -> handleFavorite()
+        }
+    }
+
     private fun setListeners() {
-        binding.imageviewBack.setOnClickListener { backScreen() }
-        binding.buttonRemoveBook.setOnClickListener { handleRemove(bookId) }
-        binding.checkboxFavorite.setOnClickListener { handleFavorite() }
+        binding.imageviewBack.setOnClickListener(this)
+        binding.buttonRemoveBook.setOnClickListener(this)
+        binding.checkboxFavorite.setOnClickListener(this)
     }
 
     private fun handleFavorite() {
@@ -56,7 +64,7 @@ class DetailsFragment : Fragment() {
         AlertDialog.Builder(requireContext())
             .setMessage(getString(R.string.dialog_message_delete_item))
             .setPositiveButton(getString(R.string.dialog_positive_button_yes)) { _, _ ->
-                viewModel.removeBook(id)
+                viewModel.deleteBook(id)
             }
             .setNegativeButton(getString(R.string.dialog_negative_button_no), null)
             .show()
@@ -73,7 +81,7 @@ class DetailsFragment : Fragment() {
             }
         }
 
-        viewModel.bookRemoved.observe(viewLifecycleOwner) { success ->
+        viewModel.bookDeleted.observe(viewLifecycleOwner) { success ->
             if (success) {
                 Toast.makeText(
                     requireContext(),

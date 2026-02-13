@@ -3,29 +3,17 @@ package com.canaldothiago.mybooks.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.canaldothiago.mybooks.entity.BookEntity
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import com.canaldothiago.mybooks.data.entity.BookEntity
 import com.canaldothiago.mybooks.repository.BookRepository
+import kotlinx.coroutines.launch
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = BookRepository.getInstance(application.applicationContext)
-    private val _books = MutableLiveData<List<BookEntity>>()
-    val books: LiveData<List<BookEntity>> = _books
+    val bookList: LiveData<List<BookEntity>> = repository.getAllBooks().asLiveData()
 
-    init {
-        if (repository.getAllBooks().isEmpty()) {
-            repository.loadInitialData()
-        }
-    }
-
-    fun getAllBooks() {
-        _books.value = repository.getAllBooks()
-    }
     fun favorite(id: Int) {
-        val book = _books.value?.find { it.id == id }
-        book?.let {
-            repository.toggleFavoriteStatus(it.id)
-            getAllBooks()
-        }
+        viewModelScope.launch { repository.toggleFavoriteStatus(id) }
     }
 }

@@ -42,13 +42,8 @@ class FavoriteFragment : Fragment() {
         _binding = null
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.getFavoriteBooks()
-    }
-
     private fun setObserver() {
-        viewModel.books.observe(viewLifecycleOwner) {
+        viewModel.booksFavoritesList.observe(viewLifecycleOwner) {
             if (it.isEmpty()) {
                 binding.recyclerviewBooksFavorite.visibility = View.GONE
                 binding.textviewNoBooks.visibility = View.VISIBLE
@@ -72,7 +67,6 @@ class FavoriteFragment : Fragment() {
 
             override fun onFavoriteClick(id: Int) {
                 viewModel.favorite(id)
-                viewModel.getFavoriteBooks()
             }
         })
     }
